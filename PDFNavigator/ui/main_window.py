@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QFrame, QGroupBox, QGridLayout
 )
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 from pathlib import Path
 
 from PDFNavigator.ui.widgets import DropArea, StatusIndicator
@@ -24,6 +24,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("PDFNavigator - PDF 书签添加工具")
         self.setMinimumSize(700, 500)
         self.setStyleSheet(get_main_style())
+
+        # Set window icon
+        icon_path = Path(__file__).parent.parent / "assets" / "icon.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
 
         self._pdf_path: Path | None = None
         self._toc_page: int | None = None

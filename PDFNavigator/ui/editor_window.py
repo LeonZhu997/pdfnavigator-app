@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QMessageBox, QLabel, QFrame, QHeaderView, QSplitter
 )
 from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QIcon
 from pathlib import Path
 from typing import List
 
@@ -26,6 +27,11 @@ class EditorWindow(QDialog):
         self.setWindowTitle(f"编辑书签 - {pdf_path.name}")
         self.setMinimumSize(900, 650)
         self.setStyleSheet(get_main_style())
+
+        # Set window icon
+        icon_path = Path(__file__).parent.parent / "assets" / "icon.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
 
         self._setup_ui()
         self._populate_tree()

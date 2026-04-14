@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+from PySide6.QtGui import QIcon
 
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -16,6 +17,11 @@ def main():
     app.setApplicationName("PDFNavigator")
     app.setApplicationVersion("0.1.0")
     app.setOrganizationName("PDFNavigator")
+
+    # Set application icon
+    icon_path = Path(__file__).parent / "PDFNavigator" / "assets" / "icon.png"
+    if icon_path.exists():
+        app.setWindowIcon(QIcon(str(icon_path)))
 
     window = MainWindow()
     window.show()

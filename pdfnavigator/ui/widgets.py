@@ -6,7 +6,7 @@ from PySide6.QtGui import QDragEnterEvent, QDropEvent, QFont, QPalette, QColor
 from pathlib import Path
 import fitz
 
-from PDFNavigator.ui.styles import get_drop_area_style, get_drop_area_active_style, COLORS
+from pdfnavigator.ui.styles import get_drop_area_style, get_drop_area_active_style, COLORS
 
 
 class DropArea(QFrame):

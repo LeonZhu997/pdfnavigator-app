@@ -1,5 +1,5 @@
 import pytest
-from PDFNavigator.utils.helpers import extract_page_number, infer_level_from_numbering
+from pdfnavigator.utils.helpers import extract_page_number, infer_level_from_numbering
 
 
 def test_extract_page_number_simple():

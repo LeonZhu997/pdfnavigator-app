@@ -3,7 +3,7 @@
 import fitz
 import re
 from typing import Optional, List
-from PDFNavigator.utils.config import TOC_KEYWORDS, MAX_SCAN_PAGES
+from pdfnavigator.utils.config import TOC_KEYWORDS, MAX_SCAN_PAGES
 
 
 class TOCDetector:

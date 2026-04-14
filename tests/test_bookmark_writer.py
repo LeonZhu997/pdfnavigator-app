@@ -1,8 +1,8 @@
 import pytest
 import fitz
 from pathlib import Path
-from PDFNavigator.core.bookmark_writer import BookmarkWriter
-from PDFNavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.core.bookmark_writer import BookmarkWriter
+from pdfnavigator.core.toc_parser import BookmarkEntry
 
 
 @pytest.fixture

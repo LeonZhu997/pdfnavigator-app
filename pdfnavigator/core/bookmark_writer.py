@@ -3,7 +3,7 @@
 import fitz
 from pathlib import Path
 from typing import List
-from PDFNavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.core.toc_parser import BookmarkEntry
 
 
 class BookmarkWriter:

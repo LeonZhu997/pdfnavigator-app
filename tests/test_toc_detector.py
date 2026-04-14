@@ -1,7 +1,7 @@
 import pytest
 import fitz
 from pathlib import Path
-from PDFNavigator.core.toc_detector import TOCDetector
+from pdfnavigator.core.toc_detector import TOCDetector
 
 
 @pytest.fixture

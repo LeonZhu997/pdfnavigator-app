@@ -1,7 +1,7 @@
 import pytest
 import fitz
 from pathlib import Path
-from PDFNavigator.core.toc_parser import TOCParser, BookmarkEntry
+from pdfnavigator.core.toc_parser import TOCParser, BookmarkEntry
 
 
 @pytest.fixture

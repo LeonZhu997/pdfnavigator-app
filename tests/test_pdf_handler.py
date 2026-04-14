@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 import fitz
-from PDFNavigator.core.pdf_handler import PDFHandler
+from pdfnavigator.core.pdf_handler import PDFHandler
 
 
 @pytest.fixture

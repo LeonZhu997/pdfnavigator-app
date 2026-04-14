@@ -8,7 +8,7 @@ from PySide6.QtGui import QIcon
 sys.path.insert(0, str(Path(__file__).parent))
 
 from PySide6.QtWidgets import QApplication
-from PDFNavigator.ui.main_window import MainWindow
+from pdfnavigator.ui.main_window import MainWindow
 
 
 def main():

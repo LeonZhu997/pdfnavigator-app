@@ -1,5 +1,5 @@
 [project]
-name = "PDFNavigator"
+name = "pdfnavigator"
 version = "0.1.0"
 description = "A GUI application to add bookmarks to PDFs from table of contents"
 readme = "README.md"

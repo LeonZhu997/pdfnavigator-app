@@ -1,5 +1,5 @@
 import pytest
-from PDFNavigator.utils.config import TOC_KEYWORDS, MAX_SCAN_PAGES
+from pdfnavigator.utils.config import TOC_KEYWORDS, MAX_SCAN_PAGES
 
 
 def test_toc_keywords_contains_chinese():

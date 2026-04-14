@@ -5,7 +5,7 @@ import pdfplumber
 import re
 from dataclasses import dataclass
 from typing import List
-from PDFNavigator.utils.helpers import extract_page_number, infer_level_from_numbering, clean_title
+from pdfnavigator.utils.helpers import extract_page_number, infer_level_from_numbering, clean_title
 
 
 @dataclass

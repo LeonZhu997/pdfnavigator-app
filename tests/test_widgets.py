@@ -1,6 +1,6 @@
 import pytest
 from PySide6.QtWidgets import QApplication
-from PDFNavigator.ui.widgets import DropArea
+from pdfnavigator.ui.widgets import DropArea
 
 
 @pytest.fixture

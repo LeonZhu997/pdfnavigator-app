@@ -9,11 +9,11 @@ from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QIcon
 from pathlib import Path
 
-from PDFNavigator.ui.widgets import DropArea, StatusIndicator
-from PDFNavigator.ui.styles import get_main_style, COLORS
-from PDFNavigator.core.toc_detector import TOCDetector
-from PDFNavigator.core.toc_parser import TOCParser
-from PDFNavigator.core.font_chapter_detector import FontChapterDetector
+from pdfnavigator.ui.widgets import DropArea, StatusIndicator
+from pdfnavigator.ui.styles import get_main_style, COLORS
+from pdfnavigator.core.toc_detector import TOCDetector
+from pdfnavigator.core.toc_parser import TOCParser
+from pdfnavigator.core.font_chapter_detector import FontChapterDetector
 
 
 class MainWindow(QMainWindow):
@@ -281,6 +281,6 @@ class MainWindow(QMainWindow):
 
     def _open_editor(self):
         """Open the bookmark editor window."""
-        from PDFNavigator.ui.editor_window import EditorWindow
+        from pdfnavigator.ui.editor_window import EditorWindow
         editor = EditorWindow(self._pdf_path, self._bookmarks, self)
         editor.exec()

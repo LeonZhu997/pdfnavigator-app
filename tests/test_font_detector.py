@@ -4,8 +4,8 @@ import pytest
 import fitz
 from pathlib import Path
 
-from PDFNavigator.core.font_chapter_detector import FontChapterDetector
-from PDFNavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.core.font_chapter_detector import FontChapterDetector
+from pdfnavigator.core.toc_parser import BookmarkEntry
 
 
 @pytest.fixture

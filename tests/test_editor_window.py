@@ -1,8 +1,8 @@
 import pytest
 from pathlib import Path
 from PySide6.QtWidgets import QApplication
-from PDFNavigator.ui.editor_window import EditorWindow
-from PDFNavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.ui.editor_window import EditorWindow
+from pdfnavigator.core.toc_parser import BookmarkEntry
 
 
 @pytest.fixture

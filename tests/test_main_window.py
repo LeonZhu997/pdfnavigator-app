@@ -1,6 +1,6 @@
 import pytest
 from PySide6.QtWidgets import QApplication
-from PDFNavigator.ui.main_window import MainWindow
+from pdfnavigator.ui.main_window import MainWindow
 
 
 @pytest.fixture

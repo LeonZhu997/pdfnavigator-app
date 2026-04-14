@@ -4,7 +4,7 @@ import fitz
 from typing import List, Dict
 from collections import Counter
 
-from PDFNavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.core.toc_parser import BookmarkEntry
 
 
 class FontChapterDetector:

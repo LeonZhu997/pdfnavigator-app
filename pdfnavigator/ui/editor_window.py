@@ -10,9 +10,9 @@ from PySide6.QtGui import QIcon
 from pathlib import Path
 from typing import List
 
-from PDFNavigator.core.toc_parser import BookmarkEntry
-from PDFNavigator.core.bookmark_writer import BookmarkWriter
-from PDFNavigator.ui.styles import get_main_style, COLORS
+from pdfnavigator.core.toc_parser import BookmarkEntry
+from pdfnavigator.core.bookmark_writer import BookmarkWriter
+from pdfnavigator.ui.styles import get_main_style, COLORS
 
 
 class EditorWindow(QDialog):

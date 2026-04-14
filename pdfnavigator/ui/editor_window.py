@@ -1,5 +1,6 @@
 """Bookmark editor window for PDFNavigator."""
 
+import sys
 from PySide6.QtWidgets import (
     QDialog, QWidget, QVBoxLayout, QHBoxLayout,
     QTreeWidget, QTreeWidgetItem, QPushButton, QFileDialog,
@@ -13,6 +14,14 @@ from typing import List
 from pdfnavigator.core.toc_parser import BookmarkEntry
 from pdfnavigator.core.bookmark_writer import BookmarkWriter
 from pdfnavigator.ui.styles import get_main_style, COLORS
+
+
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller."""
+    if hasattr(sys, '_MEIPASS'):
+        return Path(sys._MEIPASS) / relative_path
+    else:
+        return Path(__file__).parent.parent / "assets" / relative_path
 
 
 class EditorWindow(QDialog):
@@ -29,7 +38,7 @@ class EditorWindow(QDialog):
         self.setStyleSheet(get_main_style())
 
         # Set window icon
-        icon_path = Path(__file__).parent.parent / "assets" / "icon.png"
+        icon_path = get_resource_path("icon.ico")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 

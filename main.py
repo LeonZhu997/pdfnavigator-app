@@ -4,6 +4,16 @@ import sys
 from pathlib import Path
 from PySide6.QtGui import QIcon
 
+# Handle PyInstaller bundled path
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller."""
+    if hasattr(sys, '_MEIPASS'):
+        # Running as PyInstaller bundle
+        return Path(sys._MEIPASS) / relative_path
+    else:
+        # Running in development
+        return Path(__file__).parent / relative_path
+
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -19,7 +29,7 @@ def main():
     app.setOrganizationName("PDFNavigator")
 
     # Set application icon
-    icon_path = Path(__file__).parent / "PDFNavigator" / "assets" / "icon.png"
+    icon_path = get_resource_path("assets/icon.ico")
     if icon_path.exists():
         app.setWindowIcon(QIcon(str(icon_path)))
 

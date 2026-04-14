@@ -1,5 +1,6 @@
 """Main window for PDFNavigator."""
 
+import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QProgressBar, QFileDialog, QMessageBox,
@@ -16,6 +17,14 @@ from pdfnavigator.core.toc_parser import TOCParser
 from pdfnavigator.core.font_chapter_detector import FontChapterDetector
 
 
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller."""
+    if hasattr(sys, '_MEIPASS'):
+        return Path(sys._MEIPASS) / relative_path
+    else:
+        return Path(__file__).parent.parent / "assets" / relative_path
+
+
 class MainWindow(QMainWindow):
     """Main application window with modern styling."""
 
@@ -26,7 +35,7 @@ class MainWindow(QMainWindow):
         self.setStyleSheet(get_main_style())
 
         # Set window icon
-        icon_path = Path(__file__).parent.parent / "assets" / "icon.png"
+        icon_path = get_resource_path("icon.ico")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 

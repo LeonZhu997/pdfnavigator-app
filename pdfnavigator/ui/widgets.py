@@ -61,42 +61,44 @@ class DropArea(QFrame):
         """)
         layout.addWidget(self._sub_label)
 
-        # Hint box
-        hint_box = QFrame()
-        hint_box.setStyleSheet(f"""
+        # Hint box - only show when no file loaded
+        self._hint_box = QFrame()
+        self._hint_box.setStyleSheet(f"""
             QFrame {{
-                background-color: {COLORS['bg_white']};
-                border: 1px solid {COLORS['border']};
+                background-color: #F0F7FF;
+                border: 1px solid {COLORS['primary']};
                 border-radius: 8px;
-                padding: 10px;
+                padding: 8px 12px;
             }}
         """)
-        hint_layout = QHBoxLayout(hint_box)
-        hint_layout.setSpacing(10)
+        hint_layout = QHBoxLayout(self._hint_box)
+        hint_layout.setContentsMargins(8, 4, 8, 4)
+        hint_layout.setSpacing(8)
 
         hint_icon = QLabel("💡")
-        hint_icon.setStyleSheet("font-size: 20px; background: transparent; border: none;")
+        hint_icon.setStyleSheet("font-size: 18px; background: transparent; border: none;")
         hint_layout.addWidget(hint_icon)
 
-        hint_text = QLabel("提示：支持 .pdf 格式文件，文件大小不限")
-        hint_text.setStyleSheet(f"font-size: 12px; color: {COLORS['text_secondary']}; background: transparent; border: none;")
+        hint_text = QLabel("提示：支持 .pdf 格式文件，拖拽或点击下方按钮选择")
+        hint_text.setStyleSheet(f"font-size: 13px; color: {COLORS['text_primary']}; background: transparent; border: none;")
         hint_layout.addWidget(hint_text)
         hint_layout.addStretch()
 
-        layout.addWidget(hint_box)
+        layout.addWidget(self._hint_box)
 
-        # File info section (hidden initially) - more prominent
+        # File info section (hidden initially)
         self._info_frame = QFrame()
         self._info_frame.setStyleSheet(f"""
             QFrame {{
-                background-color: {COLORS['bg_white']};
-                border: 1px solid {COLORS['success']};
+                background-color: #ECFDF5;
+                border: 2px solid {COLORS['success']};
                 border-radius: 8px;
-                padding: 15px;
+                padding: 12px;
             }}
         """)
         info_layout = QHBoxLayout(self._info_frame)
-        info_layout.setSpacing(25)
+        info_layout.setContentsMargins(12, 8, 12, 8)
+        info_layout.setSpacing(20)
 
         self._pages_label = QLabel()
         self._pages_label.setStyleSheet(f"font-size: 14px; color: {COLORS['text_primary']}; background: transparent; border: none; font-weight: bold;")
@@ -167,6 +169,7 @@ class DropArea(QFrame):
             parent_path = parent_path[:40] + "..."
         self._path_label.setText(f"📁 {parent_path}")
         self._info_frame.setVisible(True)
+        self._hint_box.setVisible(False)
 
     def reset(self):
         """Reset to initial state."""
@@ -192,6 +195,7 @@ class DropArea(QFrame):
             border: none;
         """)
         self._info_frame.setVisible(False)
+        self._hint_box.setVisible(True)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():

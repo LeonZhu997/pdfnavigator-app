@@ -64,17 +64,17 @@ class MainWindow(QMainWindow):
         header_layout.addStretch()
         layout.addLayout(header_layout)
 
-        # 操作流程说明
+        # 操作流程说明 - 带箭头
         steps_frame = QFrame()
         steps_frame.setStyleSheet(f"""
             QFrame {{
                 background-color: {COLORS['bg_light']};
                 border-radius: 8px;
-                padding: 10px;
+                padding: 10px 15px;
             }}
         """)
         steps_layout = QHBoxLayout(steps_frame)
-        steps_layout.setSpacing(30)
+        steps_layout.setSpacing(5)
 
         steps = [
             ("①", "选择PDF"),
@@ -82,19 +82,26 @@ class MainWindow(QMainWindow):
             ("③", "编辑确认"),
             ("④", "保存导出"),
         ]
-        for num, text in steps:
+        for i, (num, text) in enumerate(steps):
             step_widget = QWidget()
             step_layout = QVBoxLayout(step_widget)
             step_layout.setSpacing(2)
             num_label = QLabel(num)
-            num_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {COLORS['primary']}; background: transparent;")
+            num_label.setStyleSheet(f"font-size: 18px; font-weight: bold; color: {COLORS['primary']}; background: transparent;")
             num_label.setAlignment(Qt.AlignCenter)
             step_layout.addWidget(num_label)
             txt_label = QLabel(text)
-            txt_label.setStyleSheet(f"font-size: 11px; color: {COLORS['text_secondary']}; background: transparent;")
+            txt_label.setStyleSheet(f"font-size: 12px; color: {COLORS['text_secondary']}; background: transparent;")
             txt_label.setAlignment(Qt.AlignCenter)
             step_layout.addWidget(txt_label)
             steps_layout.addWidget(step_widget)
+
+            # 添加箭头（除了最后一个步骤）
+            if i < len(steps) - 1:
+                arrow_label = QLabel("→")
+                arrow_label.setStyleSheet(f"font-size: 20px; color: {COLORS['primary']}; background: transparent; font-weight: bold;")
+                arrow_label.setAlignment(Qt.AlignCenter)
+                steps_layout.addWidget(arrow_label)
 
         steps_layout.addStretch()
         layout.addWidget(steps_frame)

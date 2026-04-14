@@ -134,22 +134,22 @@ class DropArea(QFrame):
         file_size = self._file_path.stat().st_size
         size_mb = file_size / (1024 * 1024)
 
-        # Update icon - show PDF icon
-        self._icon_label.setText("📑")
-        self._icon_label.setStyleSheet(f"font-size: 64px; background: transparent; border: none; color: {COLORS['success']};")
+        # Show PDF document icon - larger
+        self._icon_label.setText("📄")
+        self._icon_label.setStyleSheet(f"font-size: 72px; background: transparent; border: none; color: {COLORS['primary']};")
 
-        # Update main text - show filename
+        # Update main text - show filename prominently with underline
         self._main_label.setText(self._file_path.name)
         self._main_label.setStyleSheet(f"""
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: {COLORS['text_primary']};
             background: transparent;
             border: none;
         """)
 
-        # Update sub text with instructions
-        self._sub_label.setText("✓ 文件已加载，点击「开始处理」提取书签")
+        # Update sub text with success indicator
+        self._sub_label.setText("✓ 已加载，点击「开始提取书签」")
         self._sub_label.setStyleSheet(f"""
             font-size: 14px;
             color: {COLORS['success']};
@@ -159,9 +159,13 @@ class DropArea(QFrame):
         """)
 
         # Show file info with better formatting
-        self._pages_label.setText(f"📄 {page_count} 页")
+        self._pages_label.setText(f"📑 {page_count} 页")
         self._size_label.setText(f"📦 {size_mb:.1f} MB")
-        self._path_label.setText(f"📁 {str(self._file_path.parent)[:50]}...")
+        # Show full path if not too long
+        parent_path = str(self._file_path.parent)
+        if len(parent_path) > 40:
+            parent_path = parent_path[:40] + "..."
+        self._path_label.setText(f"📁 {parent_path}")
         self._info_frame.setVisible(True)
 
     def reset(self):

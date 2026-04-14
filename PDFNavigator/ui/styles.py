@@ -185,26 +185,18 @@ QMessageBox QLabel {
 
 # Drop area style (enhanced)
 DROP_AREA_STYLE = """
-QLabel {
+QFrame {
     border: 3px dashed {{primary}};
     border-radius: 16px;
-    padding: 40px 30px;
-    background-color: #EEF2FF;
-    font-size: 16px;
-    color: {{primary}};
-    font-weight: bold;
+    background-color: #F0F7FF;
 }
 """
 
 DROP_AREA_ACTIVE_STYLE = """
-QLabel {
-    border: 3px solid {{success}};
+QFrame {
+    border: 4px solid {{success}};
     border-radius: 16px;
-    padding: 40px 30px;
     background-color: #ECFDF5;
-    font-size: 16px;
-    color: {{success}};
-    font-weight: bold;
 }
 """
 

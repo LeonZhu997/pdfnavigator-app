@@ -99,12 +99,13 @@ class MainWindow(QMainWindow):
         self.drop_area.file_dropped.connect(self._on_file_dropped)
         layout.addWidget(self.drop_area)
 
-        # File selection button
+        # File selection button - centered and styled
         select_layout = QHBoxLayout()
         select_layout.addStretch()
-        self.select_btn = QPushButton("📁 浏览文件...")
+        self.select_btn = QPushButton("📂 浏览选择文件...")
         self.select_btn.clicked.connect(self._select_file)
-        self.select_btn.setMinimumWidth(150)
+        self.select_btn.setMinimumWidth(180)
+        self.select_btn.setToolTip("点击打开文件选择对话框")
         select_layout.addWidget(self.select_btn)
         select_layout.addStretch()
         layout.addLayout(select_layout)
@@ -123,30 +124,32 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(progress_frame)
 
-        # Action buttons
+        # Action buttons - clearer labels
         btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(12)
+        btn_layout.setSpacing(15)
 
-        self.process_button = QPushButton("▶ 开始处理")
+        self.process_button = QPushButton("▶ 开始提取书签")
         self.process_button.setObjectName("process_button")
         self.process_button.setEnabled(False)
         self.process_button.clicked.connect(self._process_pdf)
-        self.process_button.setMinimumWidth(130)
+        self.process_button.setMinimumWidth(150)
+        self.process_button.setToolTip("自动检测目录页或字体大小提取书签")
         btn_layout.addWidget(self.process_button)
 
-        self.editor_button = QPushButton("✎ 编辑书签")
+        self.editor_button = QPushButton("✏ 编辑书签列表")
         self.editor_button.setObjectName("editor_button")
         self.editor_button.setEnabled(False)
         self.editor_button.clicked.connect(self._open_editor)
-        self.editor_button.setMinimumWidth(130)
+        self.editor_button.setMinimumWidth(150)
+        self.editor_button.setToolTip("编辑、删除或调整书签层级")
         btn_layout.addWidget(self.editor_button)
 
         btn_layout.addStretch()
 
-        self.exit_button = QPushButton("✕ 退出")
+        self.exit_button = QPushButton("✕ 退出程序")
         self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(self.close)
-        self.exit_button.setMinimumWidth(90)
+        self.exit_button.setMinimumWidth(100)
         btn_layout.addWidget(self.exit_button)
 
         layout.addLayout(btn_layout)

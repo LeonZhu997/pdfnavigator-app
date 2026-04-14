@@ -1,9 +1,9 @@
 """Bookmark editor window for PDFNavigator."""
 
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QDialog, QWidget, QVBoxLayout, QHBoxLayout,
     QTreeWidget, QTreeWidgetItem, QPushButton, QFileDialog,
-    QMessageBox, QToolBar, QLabel
+    QMessageBox, QLabel
 )
 from PySide6.QtCore import Qt
 from pathlib import Path
@@ -13,11 +13,11 @@ from PDFNavigator.core.toc_parser import BookmarkEntry
 from PDFNavigator.core.bookmark_writer import BookmarkWriter
 
 
-class EditorWindow(QMainWindow):
-    """Window for editing bookmark tree before saving."""
+class EditorWindow(QDialog):
+    """Dialog for editing bookmark tree before saving."""
 
-    def __init__(self, pdf_path: Path, bookmarks: List[BookmarkEntry]):
-        super().__init__()
+    def __init__(self, pdf_path: Path, bookmarks: List[BookmarkEntry], parent=None):
+        super().__init__(parent)
         self._pdf_path = pdf_path
         self._original_bookmarks = list(bookmarks)
         self._bookmarks = list(bookmarks)
@@ -30,25 +30,7 @@ class EditorWindow(QMainWindow):
 
     def _setup_ui(self):
         """Set up UI components."""
-        central = QWidget()
-        self.setCentralWidget(central)
-        layout = QVBoxLayout(central)
-
-        # Toolbar
-        toolbar = QToolBar()
-        self.addToolBar(toolbar)
-
-        add_btn = QPushButton("添加书签")
-        add_btn.clicked.connect(self._add_bookmark)
-        toolbar.addWidget(add_btn)
-
-        delete_btn = QPushButton("删除书签")
-        delete_btn.clicked.connect(self._delete_bookmark)
-        toolbar.addWidget(delete_btn)
-
-        reset_btn = QPushButton("恢复原始")
-        reset_btn.clicked.connect(self._reset_bookmarks)
-        toolbar.addWidget(reset_btn)
+        layout = QVBoxLayout(self)
 
         # Bookmark tree
         self.bookmark_tree = QTreeWidget()
@@ -58,18 +40,34 @@ class EditorWindow(QMainWindow):
         self.bookmark_tree.setColumnWidth(2, 60)
         layout.addWidget(self.bookmark_tree)
 
+        # Toolbar buttons
+        tool_layout = QHBoxLayout()
+        add_btn = QPushButton("添加书签")
+        add_btn.clicked.connect(self._add_bookmark)
+        tool_layout.addWidget(add_btn)
+
+        delete_btn = QPushButton("删除书签")
+        delete_btn.clicked.connect(self._delete_bookmark)
+        tool_layout.addWidget(delete_btn)
+
+        reset_btn = QPushButton("恢复原始")
+        reset_btn.clicked.connect(self._reset_bookmarks)
+        tool_layout.addWidget(reset_btn)
+
+        layout.addLayout(tool_layout)
+
         # Status
         self.status_label = QLabel(f"共 {len(self._bookmarks)} 个书签")
         layout.addWidget(self.status_label)
 
-        # Buttons
+        # Bottom buttons
         btn_layout = QHBoxLayout()
         self.save_button = QPushButton("保存为新 PDF")
         self.save_button.clicked.connect(self._save_pdf)
         btn_layout.addWidget(self.save_button)
 
         self.cancel_button = QPushButton("取消")
-        self.cancel_button.clicked.connect(self.close)
+        self.cancel_button.clicked.connect(self.reject)
         btn_layout.addWidget(self.cancel_button)
 
         layout.addLayout(btn_layout)
@@ -110,11 +108,20 @@ class EditorWindow(QMainWindow):
 
     def _save_pdf(self):
         """Save PDF with bookmarks."""
+        # 默认保存到源 PDF 同目录，文件名加 _bookmarked
+        default_name = str(self._pdf_path.stem) + "_bookmarked.pdf"
+        default_dir = str(self._pdf_path.parent)
+        default_path = str(Path(default_dir) / default_name)
+
         output_path, _ = QFileDialog.getSaveFileName(
-            self, "保存 PDF", "", "PDF Files (*.pdf)"
+            self, "保存 PDF", default_path, "PDF Files (*.pdf)"
         )
+
         if output_path:
-            writer = BookmarkWriter()
-            writer.write(str(self._pdf_path), self._bookmarks, output_path)
-            QMessageBox.information(self, "保存成功", f"已保存到: {output_path}")
-            self.close()
+            try:
+                writer = BookmarkWriter()
+                writer.write(str(self._pdf_path), self._bookmarks, output_path)
+                QMessageBox.information(self, "保存成功", f"已保存到:\n{output_path}")
+                self.accept()
+            except Exception as e:
+                QMessageBox.critical(self, "保存失败", f"错误: {str(e)}")

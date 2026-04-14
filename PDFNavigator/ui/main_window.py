@@ -120,5 +120,5 @@ class MainWindow(QMainWindow):
     def _open_editor(self):
         """Open the bookmark editor window."""
         from PDFNavigator.ui.editor_window import EditorWindow
-        editor = EditorWindow(self._pdf_path, self._bookmarks)
-        editor.show()
+        editor = EditorWindow(self._pdf_path, self._bookmarks, self)
+        editor.exec()

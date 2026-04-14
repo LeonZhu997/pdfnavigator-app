@@ -1,5 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -21,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='PDFNavigator',
+    name='pdfnavigator',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -34,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='pdfnavigator/assets/icon.ico',
+    icon=['pdfnavigator\\assets\\icon.ico'],
 )

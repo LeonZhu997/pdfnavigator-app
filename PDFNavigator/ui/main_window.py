@@ -3,7 +3,7 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QProgressBar, QFileDialog, QMessageBox,
-    QFrame, QGroupBox
+    QFrame, QGroupBox, QGridLayout
 )
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont
@@ -36,33 +36,63 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
-        layout.setSpacing(20)
-        layout.setContentsMargins(30, 30, 30, 30)
+        layout.setSpacing(15)
+        layout.setContentsMargins(25, 25, 25, 25)
 
         # Header
         header_layout = QHBoxLayout()
         title_label = QLabel("PDFNavigator")
         title_label.setStyleSheet(f"""
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: {COLORS['primary']};
         """)
         header_layout.addWidget(title_label)
 
-        subtitle_label = QLabel("自动提取并添加 PDF 书签")
+        subtitle_label = QLabel("PDF 书签自动添加工具")
         subtitle_label.setStyleSheet(f"""
-            font-size: 14px;
+            font-size: 13px;
             color: {COLORS['text_secondary']};
+            padding-left: 10px;
         """)
         header_layout.addWidget(subtitle_label)
         header_layout.addStretch()
         layout.addLayout(header_layout)
 
-        # Divider
-        divider = QFrame()
-        divider.setFrameShape(QFrame.HLine)
-        divider.setStyleSheet(f"background-color: {COLORS['border']}; max-height: 1px;")
-        layout.addWidget(divider)
+        # 操作流程说明
+        steps_frame = QFrame()
+        steps_frame.setStyleSheet(f"""
+            QFrame {{
+                background-color: {COLORS['bg_light']};
+                border-radius: 8px;
+                padding: 10px;
+            }}
+        """)
+        steps_layout = QHBoxLayout(steps_frame)
+        steps_layout.setSpacing(30)
+
+        steps = [
+            ("①", "选择PDF"),
+            ("②", "提取书签"),
+            ("③", "编辑确认"),
+            ("④", "保存导出"),
+        ]
+        for num, text in steps:
+            step_widget = QWidget()
+            step_layout = QVBoxLayout(step_widget)
+            step_layout.setSpacing(2)
+            num_label = QLabel(num)
+            num_label.setStyleSheet(f"font-size: 16px; font-weight: bold; color: {COLORS['primary']}; background: transparent;")
+            num_label.setAlignment(Qt.AlignCenter)
+            step_layout.addWidget(num_label)
+            txt_label = QLabel(text)
+            txt_label.setStyleSheet(f"font-size: 11px; color: {COLORS['text_secondary']}; background: transparent;")
+            txt_label.setAlignment(Qt.AlignCenter)
+            step_layout.addWidget(txt_label)
+            steps_layout.addWidget(step_widget)
+
+        steps_layout.addStretch()
+        layout.addWidget(steps_frame)
 
         # Drop area
         self.drop_area = DropArea()
@@ -72,9 +102,9 @@ class MainWindow(QMainWindow):
         # File selection button
         select_layout = QHBoxLayout()
         select_layout.addStretch()
-        self.select_btn = QPushButton("📁 选择 PDF 文件")
+        self.select_btn = QPushButton("📁 浏览文件...")
         self.select_btn.clicked.connect(self._select_file)
-        self.select_btn.setMinimumWidth(180)
+        self.select_btn.setMinimumWidth(150)
         select_layout.addWidget(self.select_btn)
         select_layout.addStretch()
         layout.addLayout(select_layout)
@@ -82,11 +112,10 @@ class MainWindow(QMainWindow):
         # Progress section
         progress_frame = QFrame()
         progress_layout = QVBoxLayout(progress_frame)
-        progress_layout.setSpacing(10)
+        progress_layout.setSpacing(8)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
-        self.progress_bar.setMinimumWidth(400)
         progress_layout.addWidget(self.progress_bar)
 
         self.status_indicator = StatusIndicator()
@@ -96,20 +125,20 @@ class MainWindow(QMainWindow):
 
         # Action buttons
         btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(15)
+        btn_layout.setSpacing(12)
 
         self.process_button = QPushButton("▶ 开始处理")
         self.process_button.setObjectName("process_button")
         self.process_button.setEnabled(False)
         self.process_button.clicked.connect(self._process_pdf)
-        self.process_button.setMinimumWidth(120)
+        self.process_button.setMinimumWidth(130)
         btn_layout.addWidget(self.process_button)
 
-        self.editor_button = QPushButton("✎ 打开编辑器")
+        self.editor_button = QPushButton("✎ 编辑书签")
         self.editor_button.setObjectName("editor_button")
         self.editor_button.setEnabled(False)
         self.editor_button.clicked.connect(self._open_editor)
-        self.editor_button.setMinimumWidth(120)
+        self.editor_button.setMinimumWidth(130)
         btn_layout.addWidget(self.editor_button)
 
         btn_layout.addStretch()
@@ -117,17 +146,17 @@ class MainWindow(QMainWindow):
         self.exit_button = QPushButton("✕ 退出")
         self.exit_button.setObjectName("exit_button")
         self.exit_button.clicked.connect(self.close)
-        self.exit_button.setMinimumWidth(100)
+        self.exit_button.setMinimumWidth(90)
         btn_layout.addWidget(self.exit_button)
 
         layout.addLayout(btn_layout)
 
-        # Footer info
-        footer = QLabel("支持: 目录页提取 | 字体大小检测 | 多级书签")
+        # Footer
+        footer = QLabel("提示: 支持目录页自动识别 | 字体大小章节检测 | 多级书签结构")
         footer.setStyleSheet(f"""
-            font-size: 12px;
+            font-size: 11px;
             color: {COLORS['text_secondary']};
-            padding: 10px;
+            padding: 8px;
         """)
         footer.setAlignment(Qt.AlignCenter)
         layout.addWidget(footer)
@@ -143,8 +172,8 @@ class MainWindow(QMainWindow):
     def _on_file_dropped(self, path: str):
         """Handle file selection."""
         self._pdf_path = Path(path)
-        self.drop_area.set_file_loaded(self._pdf_path.name)
-        self.status_indicator.set_status("文件已加载，点击开始处理", "normal")
+        self.drop_area.set_file_loaded(path)
+        self.status_indicator.set_status("就绪 - 点击「开始处理」提取书签", "normal")
         self.process_button.setEnabled(True)
         self.editor_button.setEnabled(False)
         self._bookmarks = []

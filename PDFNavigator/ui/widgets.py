@@ -1,8 +1,10 @@
 """Custom widgets for PDFNavigator."""
 
-from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFrame
+from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFrame, QGridLayout
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QFont, QPalette, QColor
+from pathlib import Path
+import fitz
 
 from PDFNavigator.ui.styles import get_drop_area_style, get_drop_area_active_style, COLORS
 
@@ -16,28 +18,29 @@ class DropArea(QFrame):
         super().__init__(parent)
         self._is_active = False
         self._file_loaded = False
+        self._file_path = None
 
         self._setup_ui()
 
     def _setup_ui(self):
         """Set up the UI components."""
         self.setStyleSheet(get_drop_area_style())
-        self.setMinimumHeight(150)
+        self.setMinimumHeight(180)
 
         layout = QVBoxLayout(self)
-        layout.setSpacing(15)
+        layout.setSpacing(10)
 
-        # Icon hint (using text as placeholder)
-        icon_label = QLabel("📄")
-        icon_label.setAlignment(Qt.AlignCenter)
-        icon_label.setStyleSheet("font-size: 48px; background: transparent; border: none;")
-        layout.addWidget(icon_label)
+        # Icon hint
+        self._icon_label = QLabel("📄")
+        self._icon_label.setAlignment(Qt.AlignCenter)
+        self._icon_label.setStyleSheet("font-size: 42px; background: transparent; border: none;")
+        layout.addWidget(self._icon_label)
 
         # Main text
         self._main_label = QLabel("拖拽 PDF 文件到此处")
         self._main_label.setAlignment(Qt.AlignCenter)
         self._main_label.setStyleSheet(f"""
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: {COLORS['primary']};
             background: transparent;
@@ -49,44 +52,88 @@ class DropArea(QFrame):
         self._sub_label = QLabel("或点击下方按钮选择文件")
         self._sub_label.setAlignment(Qt.AlignCenter)
         self._sub_label.setStyleSheet(f"""
-            font-size: 14px;
+            font-size: 13px;
             color: {COLORS['text_secondary']};
             background: transparent;
             border: none;
         """)
         layout.addWidget(self._sub_label)
 
+        # File info section (hidden initially)
+        self._info_frame = QFrame()
+        self._info_frame.setStyleSheet("background: transparent; border: none;")
+        info_layout = QHBoxLayout(self._info_frame)
+        info_layout.setSpacing(20)
+
+        self._pages_label = QLabel()
+        self._pages_label.setStyleSheet(f"font-size: 12px; color: {COLORS['text_secondary']}; background: transparent; border: none;")
+        info_layout.addWidget(self._pages_label)
+
+        self._size_label = QLabel()
+        self._size_label.setStyleSheet(f"font-size: 12px; color: {COLORS['text_secondary']}; background: transparent; border: none;")
+        info_layout.addWidget(self._size_label)
+
+        layout.addWidget(self._info_frame)
+        self._info_frame.setVisible(False)
+
         self.setAcceptDrops(True)
 
-    def set_file_loaded(self, filename: str):
+    def set_file_loaded(self, file_path: str):
         """Update display when file is loaded."""
         self._file_loaded = True
+        self._file_path = Path(file_path)
         self.setStyleSheet(get_drop_area_active_style())
 
-        self._main_label.setText(f"✓ 已加载")
+        # Get PDF info
+        try:
+            doc = fitz.open(file_path)
+            page_count = doc.page_count
+            doc.close()
+        except:
+            page_count = "?"
+
+        file_size = self._file_path.stat().st_size
+        size_mb = file_size / (1024 * 1024)
+
+        # Update icon
+        self._icon_label.setText("✓")
+        self._icon_label.setStyleSheet(f"font-size: 48px; background: transparent; border: none; color: {COLORS['success']};")
+
+        # Update main text
+        self._main_label.setText(self._file_path.name)
         self._main_label.setStyleSheet(f"""
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
-            color: {COLORS['success']};
-            background: transparent;
-            border: none;
-        """)
-        self._sub_label.setText(filename)
-        self._sub_label.setStyleSheet(f"""
-            font-size: 14px;
             color: {COLORS['text_primary']};
             background: transparent;
             border: none;
         """)
 
+        # Update sub text with instructions
+        self._sub_label.setText("点击「开始处理」提取书签")
+        self._sub_label.setStyleSheet(f"""
+            font-size: 13px;
+            color: {COLORS['primary']};
+            background: transparent;
+            border: none;
+        """)
+
+        # Show file info
+        self._pages_label.setText(f"📑 {page_count} 页")
+        self._size_label.setText(f"📦 {size_mb:.1f} MB")
+        self._info_frame.setVisible(True)
+
     def reset(self):
         """Reset to initial state."""
         self._file_loaded = False
+        self._file_path = None
         self.setStyleSheet(get_drop_area_style())
 
+        self._icon_label.setText("📄")
+        self._icon_label.setStyleSheet("font-size: 42px; background: transparent; border: none;")
         self._main_label.setText("拖拽 PDF 文件到此处")
         self._main_label.setStyleSheet(f"""
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: {COLORS['primary']};
             background: transparent;
@@ -94,11 +141,12 @@ class DropArea(QFrame):
         """)
         self._sub_label.setText("或点击下方按钮选择文件")
         self._sub_label.setStyleSheet(f"""
-            font-size: 14px;
+            font-size: 13px;
             color: {COLORS['text_secondary']};
             background: transparent;
             border: none;
         """)
+        self._info_frame.setVisible(False)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():

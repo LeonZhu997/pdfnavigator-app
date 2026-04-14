@@ -114,25 +114,25 @@ class EditorWindow(QDialog):
 
         # Style tree items by level
         self.bookmark_tree.setStyleSheet(f"""
-            QTreeWidget {
+            QTreeWidget {{
                 background-color: {COLORS['bg_white']};
                 border: 1px solid {COLORS['border']};
                 border-radius: 8px;
                 padding: 8px;
                 font-size: 13px;
-            }
-            QTreeWidget::item {
+            }}
+            QTreeWidget::item {{
                 padding: 6px 8px;
                 border-radius: 4px;
                 margin: 2px 0;
-            }
-            QTreeWidget::item:selected {
+            }}
+            QTreeWidget::item:selected {{
                 background-color: {COLORS['primary']};
                 color: white;
-            }
-            QTreeWidget::item:hover:!selected {
+            }}
+            QTreeWidget::item:hover:!selected {{
                 background-color: {COLORS['bg_light']};
-            }
+            }}
         """)
 
         layout.addWidget(self.bookmark_tree)

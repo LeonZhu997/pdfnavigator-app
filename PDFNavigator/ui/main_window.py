@@ -10,6 +10,7 @@ from pathlib import Path
 from PDFNavigator.ui.widgets import DropArea
 from PDFNavigator.core.toc_detector import TOCDetector
 from PDFNavigator.core.toc_parser import TOCParser
+from PDFNavigator.core.font_chapter_detector import FontChapterDetector
 
 
 class MainWindow(QMainWindow):
@@ -100,11 +101,19 @@ class MainWindow(QMainWindow):
         self.progress_bar.setValue(30)
 
         if self._toc_page is None:
-            QMessageBox.warning(
-                self, "检测失败",
-                "无法自动检测目录页，请手动指定目录页位置"
+            # TOC 检测失败，询问是否使用字体检测
+            reply = QMessageBox.question(
+                self, "目录页检测失败",
+                "未检测到目录页。\n\n是否使用字体大小自动检测章节标题？\n（将扫描全文档，根据字体大小识别章节）",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes
             )
-            self.progress_bar.setVisible(False)
+
+            if reply == QMessageBox.Yes:
+                self._use_font_detection()
+            else:
+                self.status_label.setText("检测失败，请选择其他 PDF 文件")
+                self.progress_bar.setVisible(False)
             return
 
         self.status_label.setText(f"检测到目录页: 第 {self._toc_page + 1} 页，正在解析...")
@@ -114,7 +123,45 @@ class MainWindow(QMainWindow):
         self._bookmarks = parser.parse(str(self._pdf_path), self._toc_page)
         self.progress_bar.setValue(100)
 
+        if not self._bookmarks:
+            # TOC 解析无结果，尝试字体检测
+            reply = QMessageBox.question(
+                self, "目录页解析失败",
+                f"目录页解析无结果。\n\n是否使用字体大小自动检测章节标题？",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes
+            )
+            if reply == QMessageBox.Yes:
+                self._use_font_detection()
+            else:
+                self.status_label.setText("解析失败")
+                self.progress_bar.setVisible(False)
+            return
+
         self.status_label.setText(f"提取完成，共 {len(self._bookmarks)} 个书签")
+        self.editor_button.setEnabled(True)
+        self.progress_bar.setVisible(False)
+
+    def _use_font_detection(self):
+        """Use font-based chapter detection."""
+        self.status_label.setText("正在扫描全文档，检测章节标题...")
+        self.progress_bar.setValue(50)
+
+        font_detector = FontChapterDetector()
+        self._bookmarks = font_detector.detect(str(self._pdf_path))
+
+        self.progress_bar.setValue(100)
+        self.progress_bar.setVisible(False)
+
+        if not self._bookmarks:
+            QMessageBox.warning(
+                self, "检测失败",
+                "字体检测未找到章节标题。\n可能该文档没有明显的标题格式。"
+            )
+            self.status_label.setText("检测失败")
+            return
+
+        self.status_label.setText(f"字体检测完成，共 {len(self._bookmarks)} 个章节")
         self.editor_button.setEnabled(True)
 
     def _open_editor(self):
